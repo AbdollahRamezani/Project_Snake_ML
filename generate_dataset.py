@@ -18,14 +18,12 @@ class MyGame(arcade.Window):
         self.snake = Snake(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.apple = Apple(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.dataset = []
-        # self.set_update_rate(1/30)
 
     def on_draw(self):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
 
-        # Call draw() on all your sprite lists below
         self.snake.draw()
         self.apple.draw()
         
@@ -50,27 +48,22 @@ class MyGame(arcade.Window):
             self.snake.change_x = 0
             self.snake.change_y = -1
             data['direction'] = 2
-
         elif self.snake.center_y < self.apple.center_y:   
             self.snake.change_x = 0
             self.snake.change_y = 1 
             data['direction'] = 0
-
         elif self.snake.center_x > self.apple.center_x:   
             self.snake.change_x = -1
             self.snake.change_y = 0 
             data['direction'] = 3
-
         elif self.snake.center_x < self.apple.center_x:   
             self.snake.change_x = 1
             self.snake.change_y = 0 
             data['direction'] = 1
 
-        #جمع آوری دیتای فاصله مار تا سیب 
-        
         if self.snake.center_x == self.apple.center_x and self.snake.center_y < self.apple.center_y:
-            data['a0'] = 1  # سیب بالای مار هست
-            data['a1'] = 0  # سیب سمت راست مار نیست
+            data['a0'] = 1  
+            data['a1'] = 0 
             data['a2'] = 0
             data['a3'] = 0
         elif self.snake.center_x == self.apple.center_x and self.snake.center_y > self.apple.center_y:    
@@ -88,14 +81,12 @@ class MyGame(arcade.Window):
             data['a1'] = 0
             data['a2'] = 0
             data['a3'] = 1
-        #جمع آوری دیتای فاصله مار تا دیوار   
-          
-        data['w0'] = SCREEN_HEIGHT - self.snake.center_y #فاصله سر مار از دیوار بالا
-        data['w1'] = SCREEN_WIDTH - self.snake.center_x  #فاصله سر مار از دیوار راست
+
+        data['w0'] = SCREEN_HEIGHT - self.snake.center_y 
+        data['w1'] = SCREEN_WIDTH - self.snake.center_x  
         data['w2'] = self.snake.center_y
         data['w3'] = self.snake.center_x
 
-        #جمع آوری دیتای فاصله مار تا بدنه خودش
 
         for part in self.snake.body:
             if self.snake.center_x == part['center_x'] and self.snake.center_y < part['center_y']:
@@ -119,8 +110,7 @@ class MyGame(arcade.Window):
                 data['b2'] = 0
                 data['b3'] = 1  
 
-        self.dataset.append(data)             
-     
+        self.dataset.append(data)
         self.snake.on_update(delta_time)
         self.apple.on_update()
 

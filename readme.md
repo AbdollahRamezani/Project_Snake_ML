@@ -34,23 +34,28 @@ python train.py
 ```
 
  
-|  loss test   | accuracy test      |
-| :---         | :---               |
-|  0.0228     | 0.99           |
-
-
-
  3. **Play game:**
 
    you can type below command in terminal to run this file:    
 
 ```
-python main_ml.py
+
 ```
+###  loss And accuracy
+|  loss test   | accuracy test      |
+| :---         | :---               |
+|   0.0133    |  0.9958       |
+
+
+![Alt text](assets/loss-and-accuracy-for-train.png)
+
+
 ###  picture below is the output of the snake game with a neural network 
   
-![Alt text](assets/result.png)
+![Alt text](assets/result.jpg)
 
 
   
+
+
 

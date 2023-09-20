@@ -1,6 +1,5 @@
 import tensorflow as tf
 import pandas as pd
-import numpy as np
 import arcade
 from apple import Apple
 from snake import Snake
@@ -19,17 +18,20 @@ class MyGame(arcade.Window):
 
         self.snake = Snake(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.apple = Apple(SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.model = tf.keras.models.load_model('weights/snake_ml_model.h5')
+        self.model = tf.keras.models.load_model('weight/snake_ml_model.h5')
     
 
     def on_draw(self):
-        # This command should happen before we start drawing. It will clear
-        # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
 
-        # Call draw() on all your sprite lists below
         self.snake.draw()
         self.apple.draw()
+        arcade.draw_text("Score:", 20 , SCREEN_HEIGHT - 25, arcade.color.BLUE,font_name="calibri")
+        arcade.draw_text(str(self.snake.body_size), 100, SCREEN_HEIGHT -25, arcade.color.BLUE,font_name="calibri")
+
+        if self.snake.body_size== -1 or self.snake.center_x<0 or self.snake.center_x > SCREEN_WIDTH or self.snake.center_y < 0 or self.snake.center_y > SCREEN_HEIGHT:
+            arcade.draw_text("Game Over!" , SCREEN_WIDTH // 2 - 80 ,SCREEN_HEIGHT // 2, arcade.color.BLACK_BEAN, bold=True, font_size=20)
+            arcade.exit()
         
     def on_update(self, delta_time):
         """
@@ -47,11 +49,10 @@ class MyGame(arcade.Window):
                 'b1':None,
                 'b2':None,
                 'b3':None}
-
-         #جمع آوری دیتای فاصله مار تا سیب 
+                
         if self.snake.center_x == self.apple.center_x and self.snake.center_y < self.apple.center_y:
-            data['a0'] = 1  # سیب بالای مار هست
-            data['a1'] = 0  # سیب سمت راست مار نیست
+            data['a0'] = 1  
+            data['a1'] = 0  
             data['a2'] = 0
             data['a3'] = 0
         elif self.snake.center_x == self.apple.center_x and self.snake.center_y > self.apple.center_y:    
@@ -69,14 +70,10 @@ class MyGame(arcade.Window):
             data['a1'] = 0
             data['a2'] = 0
             data['a3'] = 1
-        #جمع آوری دیتای فاصله مار تا دیوار   
-          
-        data['w0'] = SCREEN_HEIGHT - self.snake.center_y #فاصله سر مار از دیوار بالا
-        data['w1'] = SCREEN_WIDTH - self.snake.center_x  #فاصله سر مار از دیوار راست
+        data['w0'] = SCREEN_HEIGHT - self.snake.center_y 
+        data['w1'] = SCREEN_WIDTH - self.snake.center_x  
         data['w2'] = self.snake.center_y
         data['w3'] = self.snake.center_x
-
-        #جمع آوری دیتای فاصله مار تا بدنه خودش
 
         for part in self.snake.body:
             if self.snake.center_x == part['center_x'] and self.snake.center_y < part['center_y']:
@@ -99,14 +96,12 @@ class MyGame(arcade.Window):
                 data['b1'] = 0
                 data['b2'] = 0
                 data['b3'] = 1  
-
         data = pd.DataFrame(data, index=[1])
         data.fillna(0, inplace=True)
         data = data.values
-
+        
         output = self.model.predict(data) 
         direction = output.argmax()
-
         if direction == 0:
             self.snake.change_x = 0
             self.snake.change_y = 1
@@ -120,16 +115,12 @@ class MyGame(arcade.Window):
             self.snake.change_x = -1
             self.snake.change_y = 0       
 
-
-        self.snake.on_update(delta_time)
+        self.snake.on_update()
         self.apple.on_update()
 
         if arcade.check_for_collision(self.snake, self.apple):
             self.snake.eat()
             self.apple = Apple(SCREEN_WIDTH, SCREEN_HEIGHT)
-
-    def on_key_release(self, key, modifiers):
-         pass
        
 if __name__ == "__main__":
     window = MyGame()
