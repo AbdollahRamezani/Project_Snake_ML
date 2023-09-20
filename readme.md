@@ -39,7 +39,7 @@ python train.py
    you can type below command in terminal to run this file:    
 
 ```
-
+python main_ml.py
 ```
 ###  loss And accuracy
 |  loss test   | accuracy test      |
